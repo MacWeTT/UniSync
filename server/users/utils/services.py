@@ -1,0 +1,130 @@
+from rest_framework_simplejwt.tokens import RefreshToken
+from rest_framework_simplejwt.token_blacklist.models import BlacklistedToken
+from django.core.exceptions import ValidationError
+from django.contrib.auth import get_user_model
+from django.conf import settings
+import requests
+
+User = get_user_model()
+
+GOOGLE_ID_TOKEN_INFO_URL = "https://www.googleapis.com/oauth2/v3/tokeninfo"
+GOOGLE_ACCESS_TOKEN_OBTAIN_URL = "https://oauth2.googleapis.com/token"
+GOOGLE_USER_INFO_URL = "https://www.googleapis.com/oauth2/v3/userinfo"
+
+
+def verifyGoogleUser(code: dict) -> dict:
+    """
+    Verify the `Google user`. Send the authorization code to the Google servers and obtain an access token.
+
+    If obtained, Google user exists, and we can proceed further with authentication.
+
+    Returns the user which was verified via Google. If user doesn't exist, creates a user with the details obtained from Google.
+
+    `Also, verify the user if not yet verified.`
+    """
+    code = code["code"]
+
+    AccessToken = googleObtainToken(code)
+
+    if AccessToken:
+        googleUser = googleObtainUserInfo(accessToken=AccessToken)
+        user = User.objects.get(email=googleUser["email"])
+        if not user.verified:
+            user.verified = True
+            user.save()
+        if not user:
+            user = createGoogleUser(googleUser)  # Create user
+        return user
+
+    return None
+
+
+def googleObtainToken(code: str) -> str:
+    """
+    Use an authorization code to fetch `JSON Web Tokens` from the Google servers. This will always give you JWT's as your Google account exists.
+
+    Returns the `access token` obtained from the response.
+    """
+    redirect_uri = "http://localhost:3000"
+
+    data = {
+        "code": code,
+        "client_id": settings.GOOGLE_OAUTH2_CLIENT_ID,
+        "client_secret": settings.GOOGLE_OAUTH2_CLIENT_SECRET,
+        "redirect_uri": redirect_uri,
+        "grant_type": "authorization_code",
+    }
+    response = requests.post(GOOGLE_ACCESS_TOKEN_OBTAIN_URL, data=data)
+
+    if not response.ok:
+        raise ValidationError("Failed to obtain access token from Google.")
+
+    accessToken = response.json()["access_token"]
+    return accessToken
+
+
+def googleObtainUserInfo(*, accessToken: str) -> dict:
+    """
+    Use an `access token` to fetch the user information from the Google servers.
+    """
+    response = requests.get(GOOGLE_USER_INFO_URL, params={"access_token": accessToken})
+
+    if not response.ok:
+        raise ValidationError("Invalid Google Access Token")
+
+    userInfo: dict = response.json()
+    return userInfo
+
+
+def jwtLogin(user) -> dict:
+    """
+    A customized version of obtaining `JSON Web Tokens`.
+
+    Adds custom claims to the `access token` which will be used in the frontend.
+    """
+    refresh = RefreshToken.for_user(user)
+    access = refresh.access_token
+
+    # Custom Claims
+    access["username"] = user.username
+    access["name"] = str(user.first_name + " " + user.last_name)
+    access["email"] = user.email
+    access["verified"] = user.verified
+    access["user_type"] = user.user_type
+
+    tokens = {"refresh": str(refresh), "access": str(access)}
+    return tokens
+
+
+def createGoogleUser(UserInfo: dict) -> User:
+    """
+    Create a user object from the user information fetched from Google.
+    """
+    email = UserInfo["email"]
+    username = email.split("@")[0]
+    verifiedEmail = UserInfo["email_verified"]
+    user, created = User.objects.get_or_create(
+        email=email,
+        defaults={
+            "username": username,
+            "first_name": UserInfo["given_name"],
+            "last_name": UserInfo["family_name"],
+            "verified": verifiedEmail,
+        },
+    )
+    return user
+
+
+def googleValidateIDToken(*, idToken: str) -> bool:
+    response = requests.get(GOOGLE_ID_TOKEN_INFO_URL, params={"id_token": idToken})
+    print(response)
+
+    if not response.ok:
+        raise ValidationError("Invalid Google ID Token")
+
+    audience = response.json()["aud"]
+
+    if audience != settings.GOOGLE_OAUTH2_CLIENT_ID:
+        raise ValidationError("Invalid Audience")
+
+    return True
