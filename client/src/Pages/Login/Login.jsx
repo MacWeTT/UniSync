@@ -66,8 +66,8 @@ const Login = () => {
           <span className="forgot">Forgot password?</span>
           <button className="login-submit">Login</button>
         </form>
-        <div class="container">
-          <hr class="hr-text" data-content="or better continue with" />
+        <div className="container">
+          <hr className="hr-text" data-content="or better continue with" />
         </div>
         <div className="login-google">
           <GoogleIcon /> Google
