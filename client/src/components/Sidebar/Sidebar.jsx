@@ -1,3 +1,4 @@
+import React from "react";
 import { useLocation, Link } from "react-router-dom";
 import logo from "../../assets/logo.svg";
 import HomeIcon from "@mui/icons-material/Home";
@@ -7,11 +8,7 @@ import AccountBoxIcon from "@mui/icons-material/AccountBox";
 import LogoutIcon from "@mui/icons-material/Logout";
 import "./Sidebar.css";
 
-import { useDispatch } from "react-redux";
-import { logout } from "../../redux/reducers/userSlice";
-
 const Sidebar = () => {
-  const dispatch = useDispatch();
   // const [sidebarVisible, setSidebarVisible] = useState(true);
   const pathname = useLocation().pathname;
 
@@ -20,7 +17,7 @@ const Sidebar = () => {
       <div className="sidebar-items">
         <Link to="/" classname="link">
           <div className="sidebar-logo">
-            <img src={logo} />
+            <img src={logo}/>
             <span className="item-text">UniSync</span>
           </div>
         </Link>
@@ -61,9 +58,7 @@ const Sidebar = () => {
         </Link>
         <div className="sidebar-item">
           <LogoutIcon fontSize="large" />
-          <span className="item-text" onClick={() => dispatch(logout())}>
-            Logout
-          </span>
+          <span className="item-text">Logout</span>
         </div>
       </div>
     </div>
