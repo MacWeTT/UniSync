@@ -55,12 +55,12 @@ const Login = () => {
               required
               autoCapitalize="true"
             />
-            <span className="floating-label">Name</span>
+            <span className="floating-label">Email</span>
           </div>
 
           <div className="floating-label-group">
             <input type="email" className="login-email" required />
-            <span className="floating-label">Email</span>
+            <span className="floating-label">Password</span>
           </div>
 
           <span className="forgot">Forgot password?</span>
