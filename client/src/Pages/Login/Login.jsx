@@ -1,31 +1,39 @@
 import axios from "axios";
+import { useState } from "react";
 import { useGoogleLogin } from "@react-oauth/google";
-import { useDispatch } from "react-redux";
-import { useLoginUserMutation } from "../redux/api/authAPI";
-import { setUser } from "../redux/reducers/userSlice";
+import { useDispatch, useSelector } from "react-redux";
+import { useLoginUserMutation } from "../../redux/api/authAPI";
+import { setUser } from "../../redux/reducers/userSlice";
 import image from "../../assets/register.svg";
 import GoogleIcon from "@mui/icons-material/Google";
+import "./Login.css";
 
 const Login = () => {
   const dispatch = useDispatch();
+  const { user } = useSelector((state) => state.user);
 
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
 
   const [login, { isLoading }] = useLoginUserMutation();
 
-  const handleLogin = async () => {
+  const handleLogin = async (e) => {
+    e.preventDefault();
     try {
       const response = await login({ username, password }).unwrap();
       dispatch(setUser(response));
+      console.log(user);
     } catch (err) {
       console.log(err);
     }
+    setPassword("");
+    setUsername("");
   };
 
   const googleLogin = useGoogleLogin({
     flow: "auth-code",
     onSuccess: (codeResponse) => {
+      console.log(codeResponse);
       axios({
         method: "POST",
         url: "http://localhost:8000/users/google/",
@@ -49,36 +57,37 @@ const Login = () => {
       </div>
       <div className="login-right">
         <h1 className="login-header">Log In</h1>
-        <form>
+        <form onSubmit={handleLogin}>
           <div className="floating-label-group">
             <input
               type="text"
               className="login-name"
               required
               autoCapitalize="true"
+              onChange={(e) => setUsername(e.target.value)}
             />
-            <span className="floating-label">Email</span>
+            <span className="floating-label">Username</span>
           </div>
 
           <div className="floating-label-group">
             <input
-              type="email"
+              type="password"
               className="login-email"
               required
-              onChange={(e) => setUsername(e.target.value)}
+              onChange={(e) => setPassword(e.target.value)}
             />
-            <span className="floating-label">Email</span>
+            <span className="floating-label">Password</span>
           </div>
 
           <span className="forgot">Forgot password?</span>
-          <button className="login-submit" onClick={handleLogin}>
-            Login
+          <button className="login-submit">
+            {isLoading ? <>Logging in...</> : <>Login</>}
           </button>
         </form>
         <div className="container">
           <hr className="hr-text" data-content="or better continue with" />
         </div>
-        <div className="login-google">
+        <div className="login-google" onClick={googleLogin}>
           <GoogleIcon /> Google
         </div>
       </div>

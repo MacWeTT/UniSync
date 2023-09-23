@@ -1,4 +1,3 @@
-import React from "react";
 import { useLocation, Link } from "react-router-dom";
 import logo from "../../assets/logo.svg";
 import HomeIcon from "@mui/icons-material/Home";
@@ -17,7 +16,7 @@ const Sidebar = () => {
       <div className="sidebar-items">
         <Link to="/" classname="link">
           <div className="sidebar-logo">
-            <img src={logo}/>
+            <img src={logo} />
             <span className="item-text">UniSync</span>
           </div>
         </Link>
