@@ -57,7 +57,7 @@ const Login = () => {
               required
               autoCapitalize="true"
             />
-            <span className="floating-label">Name</span>
+            <span className="floating-label">Email</span>
           </div>
 
           <div className="floating-label-group">
