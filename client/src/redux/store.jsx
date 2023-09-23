@@ -1,16 +1,21 @@
 import { combineReducers, configureStore } from "@reduxjs/toolkit";
 import { persistReducer, persistStore } from "redux-persist";
 import storage from "redux-persist/lib/storage";
+import thunk from "redux-thunk";
 
 //Reducers
 import userReducer from "./reducers/userSlice";
 
+//API
+import { authAPI } from "./api/authAPI";
+
 const rootReducer = combineReducers({
-    user: userReducer,
+  user: userReducer,
+  [authAPI.reducerPath]: authAPI.reducer,
 });
 
 export const store = configureStore({
-    reducer: persistReducer({ key: "root", storage }, rootReducer),
+  reducer: persistReducer({ key: "root", storage }, rootReducer),
+  middleware: [thunk, authAPI.middleware],
 });
 export const persistor = persistStore(store);
-
