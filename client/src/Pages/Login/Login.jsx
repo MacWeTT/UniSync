@@ -3,6 +3,8 @@ import { useGoogleLogin } from "@react-oauth/google";
 import { useDispatch } from "react-redux";
 import { useLoginUserMutation } from "../redux/api/authAPI";
 import { setUser } from "../redux/reducers/userSlice";
+import image from "../../assets/register.svg";
+import GoogleIcon from "@mui/icons-material/Google";
 
 const Login = () => {
   const dispatch = useDispatch();
@@ -43,7 +45,7 @@ const Login = () => {
   return (
     <div className="login-container">
       <div className="login-left">
-        <img src={image} alt="" />
+        <img src={image} alt="Register Image" />
       </div>
       <div className="login-right">
         <h1 className="login-header">Log In</h1>
@@ -59,15 +61,22 @@ const Login = () => {
           </div>
 
           <div className="floating-label-group">
-            <input type="email" className="login-email" required />
+            <input
+              type="email"
+              className="login-email"
+              required
+              onChange={(e) => setUsername(e.target.value)}
+            />
             <span className="floating-label">Email</span>
           </div>
 
           <span className="forgot">Forgot password?</span>
-          <button className="login-submit">Login</button>
+          <button className="login-submit" onClick={handleLogin}>
+            Login
+          </button>
         </form>
-        <div class="container">
-          <hr class="hr-text" data-content="or better continue with" />
+        <div className="container">
+          <hr className="hr-text" data-content="or better continue with" />
         </div>
         <div className="login-google">
           <GoogleIcon /> Google
