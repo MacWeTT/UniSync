@@ -8,7 +8,7 @@ function App() {
   return (
     <div id="app">
       <BrowserRouter>
-        <Sidebar />
+        {window.location.pathname !== "/login" && <Sidebar />}
         <div id="pages">
           <Routes>
             <Route path="/" element={<Home />} />

@@ -1,5 +1,6 @@
 .login-container {
   display: flex;
+  height: 100dvh;
 }
 .login-header {
   text-align: center;
@@ -12,6 +13,9 @@
   /* display: flex; */
   /* gap: 2rem; */
   margin: 2rem auto;
+}
+.login-left {
+  overflow: hidden;
 }
 .login-right {
   display: flex;
@@ -29,13 +33,13 @@ form {
   margin-bottom: 2rem;
 }
 .floating-label {
+  padding: 0 5px;
   position: absolute;
   pointer-events: none;
   top: 13px;
   left: 13px;
   color: var(--grey);
   background-color: var(--grey-light);
-  width: 3rem;
   text-align: center;
   opacity: 0.5;
   font-size: 1rem;
@@ -89,6 +93,7 @@ form {
   color: var(--accent);
   text-decoration: underline;
   cursor: pointer;
+  margin-top: -1.5rem;
 }
 
 .login-submit {
@@ -136,7 +141,16 @@ form {
   color: var(--grey);
   background-color: var(--grey-light);
 }
+.login-btn-container {
+  width: 35rem;
+  margin: 0 auto;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 1rem;
+}
 .login-google {
+  cursor: pointer;
   width: 220px;
   height: 72px;
   margin: 0 auto;
@@ -150,6 +164,11 @@ form {
   transition: all 200ms ease-in-out;
 }
 .login-google:hover {
-  color: var(--black);
-  background-color: var(--white);
+  color: var(--white);
+  background-color: var(--black);
+}
+.no-account {
+  text-align: center;
+  margin-top: 6rem;
+  color: var(--grey);
 }

@@ -77,7 +77,7 @@ h6 {
   overflow-y: scroll;
 }
 .link {
-  background-color: red;
+  text-decoration: underline;
 }
 
 .dot {

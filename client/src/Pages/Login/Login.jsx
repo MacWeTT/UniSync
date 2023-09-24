@@ -1,4 +1,5 @@
 import axios from "axios";
+import { Link } from "react-router-dom";
 import { useState } from "react";
 import { useGoogleLogin } from "@react-oauth/google";
 import { useDispatch, useSelector } from "react-redux";
@@ -6,6 +7,8 @@ import { useLoginUserMutation } from "../../redux/api/authAPI";
 import { setUser } from "../../redux/reducers/userSlice";
 import image from "../../assets/register.svg";
 import GoogleIcon from "@mui/icons-material/Google";
+import AppleIcon from "@mui/icons-material/Apple";
+import LinkedInIcon from "@mui/icons-material/LinkedIn";
 import "./Login.css";
 
 const Login = () => {
@@ -87,9 +90,20 @@ const Login = () => {
         <div className="container">
           <hr className="hr-text" data-content="or better continue with" />
         </div>
-        <div className="login-google" onClick={googleLogin}>
-          <GoogleIcon /> Google
+        <div className="login-btn-container">
+          <div className="login-google" onClick={googleLogin}>
+            <GoogleIcon /> Google
+          </div>
+          <div className="login-google" onClick={googleLogin}>
+            <AppleIcon /> Apple
+          </div>
+          <div className="login-google" onClick={googleLogin}>
+            <LinkedInIcon /> LinkedIn
+          </div>
         </div>
+        <span className="no-account">
+          Don&apos;t have an account? <Link className="link">Sign up</Link>
+        </span>
       </div>
     </div>
   );
